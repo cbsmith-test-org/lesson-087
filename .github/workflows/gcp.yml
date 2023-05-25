@@ -22,10 +22,10 @@ jobs:
         export_default_credentials: true
 
     # Authenticate via SAKE
-    - name: 'Authenticate via SAKE'
-      uses: 'google-github-actions/auth@main'
-      with:
-        credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
+#     - name: 'Authenticate via SAKE'
+#       uses: 'google-github-actions/auth@main'
+#       with:
+#         credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
 
     - name: Build Docker Image
       run: docker build -t $IMAGE_NAME:latest .
