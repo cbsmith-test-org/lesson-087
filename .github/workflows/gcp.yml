@@ -10,22 +10,23 @@ jobs:
     env:
       IMAGE_NAME: lesson-087
       PROJECT_ID: cool-beanbag-386521
-      REGION: northamerica-northeast1-docker.pkg.dev
+      REGION: northamerica-northeast1
+      REPOSITORY: lesson-087
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - uses: google-github-actions/setup-gcloud@main
-      with:
-        service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-        project_id: ${{ env.PROJECT_ID }}
-        export_default_credentials: true
-
-    # Authenticate via SAKE
-#     - name: 'Authenticate via SAKE'
-#       uses: 'google-github-actions/auth@main'
+#     - uses: google-github-actions/setup-gcloud@main
 #       with:
-#         credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
+#         service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+#         project_id: ${{ env.PROJECT_ID }}
+#         export_default_credentials: true
+
+    # Authenticate
+    - name: 'Authenticate'
+      uses: 'google-github-actions/auth@main'
+      with:
+        credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
 
     - name: Build Docker Image
       run: docker build -t $IMAGE_NAME:latest .
@@ -38,28 +39,13 @@ jobs:
     - name: Configure Docker Client
       run: |-
         gcloud auth configure-docker --quiet
-        gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev --quiet
-
-#     - name: Push Docker Image to Container Registry (GCR)
-#       env:
-#         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-#       run: |-
-#         docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
-#         docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
-#         docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
-#         docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
-
-# northamerica-northeast1-docker.pkg.dev/cool-beanbag-386521/lesson-087
+        gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
     - name: Push Docker Image to Artifact Registry
       env:
         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |-
-        docker tag $IMAGE_NAME:latest northamerica-northeast1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-        docker tag $IMAGE_NAME:latest northamerica-northeast1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-        docker push northamerica-northeast1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-        docker push northamerica-northeast1-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-#         docker tag $IMAGE_NAME:latest $REGION/$PROJECT_ID/images/$IMAGE_NAME:latest
-#         docker tag $IMAGE_NAME:latest $REGION/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-#         docker push $REGION/$PROJECT_ID/images/$IMAGE_NAME:latest
-#         docker push $REGION/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+        docker tag $IMAGE_NAME:latest $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+        docker tag $IMAGE_NAME:latest $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
+        docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+        docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
