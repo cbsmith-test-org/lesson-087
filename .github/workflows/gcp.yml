@@ -24,7 +24,7 @@ jobs:
 
     # Authenticate
     - name: 'Authenticate'
-      uses: 'google-github-actions/auth@main'
+      uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
 
