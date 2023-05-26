@@ -30,10 +30,10 @@ jobs:
       run: |
         bash ./scripts/git_update.sh -v patch
 
-#     - name: Configure Docker Client
-#       run: |-
-#         gcloud auth configure-docker --quiet
-#         gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
+    - name: Configure Docker Client
+      run: |-
+        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
     - name: Push Docker Image to Artifact Registry
       env:
